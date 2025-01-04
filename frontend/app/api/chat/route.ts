@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const LANGFLOW_API_TOKEN = process.env.NEXT_PUBLIC_LANGFLOW_API_TOKEN;
+    const LANGFLOW_API_TOKEN = process.env.LANGFLOW_API_TOKEN as string
 
     if (!LANGFLOW_API_TOKEN) {
       throw new Error('Missing LANGFLOW_API_TOKEN');
