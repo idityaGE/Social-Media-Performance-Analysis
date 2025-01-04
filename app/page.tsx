@@ -5,6 +5,32 @@ import { BarChart3, MessageCircle } from 'lucide-react'
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen">
+      <header className="px-4 lg:px-6 h-14 flex items-center justify-between bg-white shadow-md">
+        <Link className="flex items-center" href="/">
+          <BarChart3 className="h-5 w-5 mr-2 sm:h-6 sm:w-6" />
+          <span className="font-bold text-lg sm:text-xl truncate">
+            Social Media Analyzer
+          </span>
+        </Link>
+        <nav className="ml-auto flex items-center gap-2 sm:gap-4">
+          <Button asChild className="flex items-center space-x-1 sm:space-x-2">
+            <Link href="/chat">
+              <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="hidden sm:block">Chat Analysis</span>
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="flex items-center space-x-1 sm:space-x-2"
+          >
+            <Link href="/insight">
+              <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="hidden sm:block">Get Insights</span>
+            </Link>
+          </Button>
+        </nav>
+      </header>
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">

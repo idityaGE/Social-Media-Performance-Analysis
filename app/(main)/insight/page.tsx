@@ -5,7 +5,7 @@ export default async function Home() {
   const data = await getData()
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div>
       <main>
         <SocialMetricsComparison engagementData={data} />
       </main>
