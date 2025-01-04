@@ -10,7 +10,7 @@ const MainLayout = ({
 }) => {
   return (
     <SidebarProvider>
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-screen overflow-hidden w-screen">
         <AppSidebar />
         <SidebarInset className="flex flex-col flex-1">
           <header className="h-14 border-b flex items-center px-4">

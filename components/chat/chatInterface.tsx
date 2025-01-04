@@ -68,33 +68,27 @@ export const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full max-w-5xl px-4">
-      <ScrollArea className="flex-1 pr-4">
-        <div className="space-y-4 py-4">
+    <div className="flex flex-col h-full w-full max-w-4xl mx-auto p-4">
+      <ScrollArea className="flex-1 pr-4 w-full">
+        <div className="space-y-4 w-full">
           {messages.map((message) => (
-            <Card
-              key={message.id}
-              className={`${message.role === 'user' ? 'ml-auto' : 'mr-auto'
-                } max-w-[85%] w-fit`}
-            >
+            <Card key={message.id} className={`${message.role === 'user' ? 'ml-auto max-w-[45%]' : 'mr-auto max-w-[85%]'} border-none shadow-none`}>
               <CardContent className="p-4">
-                <div className="flex items-start gap-4">
-                  <Avatar className="shrink-0">
+                <div className="flex items-start space-x-4">
+                  <Avatar>
                     <AvatarImage src={message.role === 'user' ? '/user-avatar.png' : '/ai-avatar.png'} />
                     <AvatarFallback>{message.role === 'user' ? 'U' : 'AI'}</AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <div className="text-sm font-semibold">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold mb-1">
                       {message.role === 'user' ? 'You' : message.role === 'error' ? 'Error' : 'AI'}
                     </div>
-                    <div className="break-words">
-                      {message.role === 'user' ? (
-                        <div className="whitespace-pre-wrap">{message.content}</div>
-                      ) : (
-                        <MarkdownMessage content={message.content} />
-                      )}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
+                    {message.role === 'user' ? (
+                      <div className="whitespace-pre-wrap break-words">{message.content}</div>
+                    ) : (
+                      <MarkdownMessage content={message.content} />
+                    )}
+                    <div className="text-xs mt-2 text-muted-foreground">
                       {new Date(message.timestamp).toLocaleTimeString()}
                     </div>
                   </div>
@@ -107,27 +101,22 @@ export const ChatInterface: React.FC = () => {
       </ScrollArea>
 
       {isLoading && (
-        <div className="flex items-center justify-center gap-2 py-3">
+        <div className="flex items-center justify-center space-x-2 p-4">
           <Loader2 className="h-5 w-5 animate-spin" />
           <span className="text-sm text-muted-foreground">AI is thinking...</span>
         </div>
       )}
-
-      <div className="mt-4 border-t pt-4">
-        <form onSubmit={handleSubmit} className="flex gap-2">
+      <div className='mt-8 border-t w-full'>
+        <form onSubmit={handleSubmit} className="flex space-x-2 mt-4">
           <Input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1"
+            className="flex-1 py-6"
             disabled={isLoading}
           />
-          <Button
-            type="submit"
-            size="icon"
-            disabled={isLoading || !input.trim()}
-          >
+          <Button type="submit" disabled={isLoading || !input.trim()} className='p-6'>
             <Send className="h-5 w-5" />
           </Button>
         </form>
