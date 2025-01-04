@@ -8,11 +8,11 @@ export default function NotFound() {
       <Card className="w-[420px]">
         <CardHeader>
           <CardTitle>404 - Page Not Found</CardTitle>
-          <CardDescription>Oops! The page you're looking for doesn't exist.</CardDescription>
+          <CardDescription>Oops! The page you&apos;re looking for doesn&apos;t exist.</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            It seems you've stumbled upon a broken link or entered a URL that doesn't exist on our site.
+            It seems you&apos;ve stumbled upon a broken link or entered a URL that doesn&apos;t exist on our site.
           </p>
         </CardContent>
         <CardFooter>
