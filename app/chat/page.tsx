@@ -3,7 +3,7 @@ import { ChatInterface } from "@/components/chat/chatInterface";
 const ChatPage = () => {
   return (
     <>
-      <div>
+      <div className="h-screen">
         <ChatInterface />
       </div>
     </>

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Link from 'next/link'
+import { Button } from "@/components/ui/button"
+import { BarChart3, MessageCircle } from 'lucide-react'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +30,34 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <header className="px-4 lg:px-6 h-14 flex items-center justify-between absolute top-0 left-0 right-0 bg-white shadow-md">
+          <Link className="flex items-center" href="/">
+            <BarChart3 className="h-5 w-5 mr-2 sm:h-6 sm:w-6" />
+            <span className="font-bold text-lg sm:text-xl truncate">
+              Social Media Analyzer
+            </span>
+          </Link>
+          <nav className="ml-auto flex items-center gap-2 sm:gap-4">
+            <Button asChild className="flex items-center space-x-1 sm:space-x-2">
+              <Link href="/chat">
+                <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="hidden sm:block">Chat Analysis</span>
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="flex items-center space-x-1 sm:space-x-2"
+            >
+              <Link href="/insight">
+                <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="hidden sm:block">Get Insights</span>
+              </Link>
+            </Button>
+          </nav>
+        </header>
+
+
         {children}
       </body>
     </html>

@@ -6,6 +6,10 @@ import { MarkdownMessage } from '../MarkdownMessage';
 import { Message } from '@/types/chat';
 import axios from 'axios';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export const ChatInterface: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -37,7 +41,6 @@ export const ChatInterface: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Include only the latest user message
       const response = await axios.post('/api/chat', {
         messages: [...messages, userMessage]
       });
@@ -65,64 +68,60 @@ export const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen max-w-4xl mx-auto p-4">
-      <div className="flex-1 overflow-y-auto mb-4 space-y-4">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`max-w-[85%] rounded-lg p-4 ${message.role === 'user'
-                ? 'bg-blue-500 text-white'
-                : message.role === 'error'
-                  ? 'bg-red-100 text-red-700'
-                  : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
-                }`}
-            >
-              <div className="text-sm font-semibold mb-2">
-                {message.role === 'user' ? 'You' : message.role === 'error' ? 'Error' : 'AI'}
-              </div>
-              {message.role === 'user' ? (
-                <div className="whitespace-pre-wrap">{message.content}</div>
-              ) : (
-                <div>
-                  <MarkdownMessage content={message.content} />
+    <div className="flex flex-col h-full max-w-4xl mx-auto p-4">
+      <ScrollArea className="flex-1 pr-4">
+        <div className="space-y-4">
+          {messages.map((message) => (
+            <Card key={message.id} className={`${message.role === 'user' ? 'ml-auto' : 'mr-auto'} max-w-[85%]`}>
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-4">
+                  <Avatar>
+                    <AvatarImage src={message.role === 'user' ? '/user-avatar.png' : '/ai-avatar.png'} />
+                    <AvatarFallback>{message.role === 'user' ? 'U' : 'AI'}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="text-sm font-semibold mb-1">
+                      {message.role === 'user' ? 'You' : message.role === 'error' ? 'Error' : 'AI'}
+                    </div>
+                    {message.role === 'user' ? (
+                      <div className="whitespace-pre-wrap">{message.content}</div>
+                    ) : (
+                      <MarkdownMessage content={message.content} />
+                    )}
+                    <div className="text-xs mt-2 text-muted-foreground">
+                      {new Date(message.timestamp).toLocaleTimeString()}
+                    </div>
+                  </div>
                 </div>
-              )}
-              <div className="text-xs mt-2 opacity-70">
-                {new Date(message.timestamp).toLocaleTimeString()}
-              </div>
-            </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
+              </CardContent>
+            </Card>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+      </ScrollArea>
 
-        {isLoading && (
-          <div className="flex items-center justify-center space-x-2 p-4">
-            <Loader2 className="h-5 w-5 animate-spin" />
-            <span className="text-sm text-gray-500">AI is thinking...</span>
-          </div>
-        )}
+      {isLoading && (
+        <div className="flex items-center justify-center space-x-2 p-4">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span className="text-sm text-muted-foreground">AI is thinking...</span>
+        </div>
+      )}
+      <div className='my-8 border-t'> 
+        <form onSubmit={handleSubmit} className="flex space-x-2">
+          <Input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your message..."
+            className="flex-1 py-6"
+            disabled={isLoading}
+          />
+          <Button type="submit" disabled={isLoading || !input.trim()} className='p-6'>
+            <Send className="h-5 w-5" />
+          </Button>
+        </form>
       </div>
-
-      <form onSubmit={handleSubmit} className="flex space-x-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type your message..."
-          className="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
-          disabled={isLoading}
-        />
-        <button
-          type="submit"
-          disabled={isLoading || !input.trim()}
-          className="bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-        >
-          <Send className="h-5 w-5" />
-        </button>
-      </form>
-    </div >
+    </div>
   );
 };
+
