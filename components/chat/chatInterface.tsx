@@ -1,96 +1,66 @@
-"use client"
+'use client';
 
-import { useChat, Message } from 'ai/react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader2 } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { MarkdownMessage } from '../MarkdownMessage';
+import { Message } from '@/types/chat';
+import axios from 'axios';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
-const MarkdownMessage = ({ content }: { content: string }) => {
-  return (
-    <ReactMarkdown
-      className="prose prose-sm max-w-none dark:prose-invert prose-pre:p-0"
-      components={{
-        code({ node, inline, className, children, ...props }) {
-          const match = /language-(\w+)/.exec(className || '');
-          return !inline && match ? (
-            <SyntaxHighlighter
-              language={match[1]}
-              style={oneDark}
-              PreTag="div"
-              className="rounded-md"
-              {...props}
-            >
-              {String(children).replace(/\n$/, '')}
-            </SyntaxHighlighter>
-          ) : (
-            <code className="bg-gray-100 dark:bg-gray-800 rounded px-1 py-0.5" {...props}>
-              {children}
-            </code>
-          );
-        },
-      }}
-    >
-      {content}
-    </ReactMarkdown>
-  );
-};
+export const ChatInterface: React.FC = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-const ChatInterface = () => {
-  const { messages, input, handleInputChange, setMessages, isLoading } =
-    useChat({
-      api: '/api/chat',
-      id: 'chat',
-      initialMessages: [],
-    });
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!input.trim() || isLoading) return;
 
-    // Create the new user message
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
       content: input,
-      createdAt: new Date(),
+      timestamp: new Date().toISOString(),
     };
 
-    // Optimistically update messages
-    setMessages([...messages, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
 
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messages: [...messages, userMessage],
-        }),
+      // Include only the latest user message
+      const response = await axios.post('/api/chat', {
+        messages: [...messages, userMessage]
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
-
-      const data = await response.json();
-
-      // Add the AI's response to the messages
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.content,
-        createdAt: new Date(),
+        content: response.data.content,
+        timestamp: new Date().toISOString(),
       };
 
-      setMessages([...messages, userMessage, aiMessage]);
-      handleInputChange({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>);
-    } catch (err) {
-      console.error('Error sending message:', err);
-      // Optionally show an error message to the user
+      setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'error',
+        content: 'Sorry, there was an error processing your message. Please try again.',
+        timestamp: new Date().toISOString(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
+      setIsLoading(false);
     }
   };
 
@@ -100,28 +70,33 @@ const ChatInterface = () => {
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'
-              }`}
+            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
               className={`max-w-[85%] rounded-lg p-4 ${message.role === 'user'
                 ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 dark:bg-gray-800'
+                : message.role === 'error'
+                  ? 'bg-red-100 text-red-700'
+                  : 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100'
                 }`}
             >
               <div className="text-sm font-semibold mb-2">
-                {message.role === 'user' ? 'You' : 'AI'}
+                {message.role === 'user' ? 'You' : message.role === 'error' ? 'Error' : 'AI'}
               </div>
               {message.role === 'user' ? (
                 <div className="whitespace-pre-wrap">{message.content}</div>
               ) : (
-                <div className={message.role === 'system' ? 'text-white' : 'text-gray-900 dark:text-gray-100'}>
+                <div>
                   <MarkdownMessage content={message.content} />
                 </div>
               )}
+              <div className="text-xs mt-2 opacity-70">
+                {new Date(message.timestamp).toLocaleTimeString()}
+              </div>
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
 
         {isLoading && (
           <div className="flex items-center justify-center space-x-2 p-4">
@@ -135,7 +110,7 @@ const ChatInterface = () => {
         <input
           type="text"
           value={input}
-          onChange={handleInputChange}
+          onChange={(e) => setInput(e.target.value)}
           placeholder="Type your message..."
           className="flex-1 rounded-lg border border-gray-300 dark:border-gray-700 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800"
           disabled={isLoading}
@@ -148,8 +123,6 @@ const ChatInterface = () => {
           <Send className="h-5 w-5" />
         </button>
       </form>
-    </div>
+    </div >
   );
 };
-
-export default ChatInterface;

@@ -1,10 +1,10 @@
-import ChatInterface from "@/components/chat/chatInterface";
+import { ChatInterface } from "@/components/chat/chatInterface";
 
 const ChatPage = () => {
   return (
     <>
       <div>
-          <ChatInterface />
+        <ChatInterface />
       </div>
     </>
   );

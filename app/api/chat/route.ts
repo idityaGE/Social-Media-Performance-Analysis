@@ -6,7 +6,14 @@ export const maxDuration = 30;
 export async function POST(req: Request) {
   try {
     const { messages } = await req.json();
-    const lastMessage = messages[messages.length - 1].content;
+    const lastMessage = messages[messages.length - 1];
+
+    if (!lastMessage || !lastMessage.content) {
+      return NextResponse.json(
+        { error: 'No message content provided' },
+        { status: 400 }
+      );
+    }
 
     const options = {
       method: 'POST',
@@ -14,21 +21,23 @@ export async function POST(req: Request) {
       params: { stream: 'false' },
       headers: {
         Authorization: 'Bearer AstraCS:SHmyzBPisdZfPevzGizQDfzt:9006f725852e6d103b6c184e6e535f9f14c16fed808db23f20fa207a4ae116c4',
-        'content-type': 'application/json'
+        'Content-Type': 'application/json'
       },
       data: {
-        input_value: lastMessage,
+        input_value: lastMessage.content,
         output_type: 'chat',
         input_type: 'chat'
       }
     };
 
-    const { data } = await axios.request(options);
+    const response = await axios.request(options);
 
-    // Extract the AI response text from your API response
-    const aiResponseText = data.outputs[0].outputs[0].results.message.text;
+    if (!response.data?.outputs?.[0]?.outputs?.[0]?.results?.message?.text) {
+      throw new Error('Invalid response format from API');
+    }
 
-    // Return just the content - the useChat hook will handle the message formatting
+    const aiResponseText = response.data.outputs[0].outputs[0].results.message.text;
+
     return NextResponse.json({
       content: aiResponseText,
     });
