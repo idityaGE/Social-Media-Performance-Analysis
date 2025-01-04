@@ -1,14 +1,13 @@
-import React from "react";
-import { getData } from "@/utils/load-data";
-import SocialMetricsComparison from "@/components/charts/chartPage";
+import Link from "next/link";
 
 export default async function Home() {
-  const data = await getData()
 
   return (
     <>
       <div className="max-w-3xl mx-auto">
-        <SocialMetricsComparison engagementData={data} />
+        <Link href="/chat">Chat Page</Link>
+        <br />
+        <Link href="/insight">Insight Page</Link>
       </div>
     </>
   );
