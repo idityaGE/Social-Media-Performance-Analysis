@@ -7,8 +7,6 @@ df = pd.read_csv("mock_social_data.csv")
 
 ASTRA_DB_TOKEN = os.getenv("ASTRA_DB_TOKEN")
 ASTRA_DB_END_POINT = os.getenv("ASTRA_DB_END_POINT")
-# ASTRA_DB_TOKEN = "AstraCS:ZLxjbvhQYgLbadbwxOuHEHGT:5d6d7dfba78e10eeb59b93c566fe15035aca24b433aaed755e8fb045b59a472f"
-# ASTRA_DB_END_POINT = "https://033152bb-1c9c-4b72-b962-b6915056e989-us-east-2.apps.astra.datastax.com"
 
 # Connect to Astra DB
 client = DataAPIClient(ASTRA_DB_TOKEN)
