@@ -15,18 +15,18 @@ export async function POST(req: Request) {
       );
     }
 
-    const LANGFLOW_API_TOKEN = process.env.LANGFLOW_API_TOKEN as string
+    // const LANGFLOW_API_TOKEN = process.env.LANGFLOW_API_TOKEN as string
 
-    if (!LANGFLOW_API_TOKEN) {
-      throw new Error('Missing LANGFLOW_API_TOKEN');
-    }
+    // if (!LANGFLOW_API_TOKEN) {
+    //   throw new Error('Missing LANGFLOW_API_TOKEN');
+    // }
 
     const options = {
       method: 'POST',
       url: 'https://api.langflow.astra.datastax.com/lf/50db0e28-1c50-4d26-a401-e9b885788af4/api/v1/run/6f38d2a8-306a-44a6-a48a-4ab28ba042e3',
       params: { stream: 'false' },
       headers: {
-        Authorization: `Bearer ${LANGFLOW_API_TOKEN}`,
+        Authorization: `Bearer AstraCS:SHmyzBPisdZfPevzGizQDfzt:9006f725852e6d103b6c184e6e535f9f14c16fed808db23f20fa207a4ae116c4`,
         'Content-Type': 'application/json'
       },
       data: {
