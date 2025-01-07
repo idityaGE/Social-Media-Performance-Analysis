@@ -70,7 +70,7 @@ export function AppSidebar() {
       <SidebarSeparator />
       <SidebarFooter className="p-4">
         <Button variant="outline" className="w-full" asChild>
-          <a href="https://github.com/yourusername/your-repo" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/idityaGE/Social-Media-Performance-Analysis" target="_blank" rel="noopener noreferrer">
             <Github className="mr-2 h-4 w-4" />
             View on GitHub
           </a>

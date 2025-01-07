@@ -4,9 +4,6 @@ import numpy as np
 from datetime import datetime, timedelta
 
 
-# Set a seed for reproducibility
-np.random.seed(42)
-
 # Number of posts
 n_posts = 1000
 
